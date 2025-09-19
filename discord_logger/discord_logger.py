@@ -12,7 +12,7 @@ from fastapi import (
 )
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-verify = os.getenv("VERIFY_SSL_DISCORD_LOGGER")
+verify = os.getenv("VERIFY_SSL_DISCORD_LOGGER", True) == True
 httpx_client = httpx.AsyncClient(verify=verify)
 
 
