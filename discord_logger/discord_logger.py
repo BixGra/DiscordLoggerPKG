@@ -7,6 +7,7 @@ import httpx
 from fastapi import (
     FastAPI,
     Request,
+    requests,
 )
 
 httpx_client = httpx.AsyncClient()
@@ -18,7 +19,7 @@ async def add_monitoring(app: FastAPI, logger_base_url: str, service_name: str, 
         "channel_id": channel_id,
     }
     print(logger_base_url)
-    await httpx_client.post(
+    requests.post(
         f"{logger_base_url}/monitoring/add-service",
         data=data,
     )
