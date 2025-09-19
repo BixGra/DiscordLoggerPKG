@@ -12,8 +12,6 @@ from fastapi import (
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-httpx_client = httpx.AsyncClient()
-
 
 def add_monitoring(app: FastAPI, logger_base_url: str, service_name: str, channel_id: int, verify: bool = True):
     data = {
@@ -25,6 +23,7 @@ def add_monitoring(app: FastAPI, logger_base_url: str, service_name: str, channe
         data=data,
         verify=verify,
     )
+    httpx_client = httpx.AsyncClient(verify=verify)
     @app.middleware("http")
     async def logger(request: Request, call_next):
         start_time = time.perf_counter()
@@ -41,7 +40,6 @@ def add_monitoring(app: FastAPI, logger_base_url: str, service_name: str, channe
         await httpx_client.post(
             f"{logger_base_url}/monitoring/add-request",
             data=data,
-            verify=verify,
         )
         return response
 

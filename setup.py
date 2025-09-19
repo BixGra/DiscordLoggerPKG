@@ -5,9 +5,9 @@ with open('requirements.txt') as f:
 
 setup(
     name="discord_logger",
-    version="0.3",
+    version="0.4",
     include_package_data=True,
-    python_requires='>=3.12',
+    python_requires='>=3.10',
     packages=find_packages(),
     setup_requires=['setuptools-git-versioning'],
     install_requires=requirements,
