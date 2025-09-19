@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name="discord_logger",
-    version="0.6",
+    version="0.7",
     include_package_data=True,
     python_requires='>=3.10',
     packages=find_packages(),
