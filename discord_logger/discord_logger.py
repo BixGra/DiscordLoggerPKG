@@ -3,11 +3,11 @@ import time
 from typing import Literal
 
 import httpx
+import requests
 
 from fastapi import (
     FastAPI,
     Request,
-    requests,
 )
 
 httpx_client = httpx.AsyncClient()
