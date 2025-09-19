@@ -1,3 +1,4 @@
+import os
 import time
 from datetime import datetime
 from typing import Literal
@@ -11,9 +12,25 @@ from fastapi import (
 )
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+verify = os.getenv("VERIFY_SSL_DISCORD_LOGGER")
+httpx_client = httpx.AsyncClient(verify=verify)
 
 
-def add_monitoring(app: FastAPI, logger_base_url: str, service_name: str, channel_id: int, verify: bool = True):
+async def log(logger_base_url: str, channel_id: int, message: str, level: Literal["INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"):
+    data = {
+        "channel_id": channel_id,
+        "logging_message" : {
+            "message": message,
+            "level": level,
+        }
+    }
+    await httpx_client.post(
+        f"{logger_base_url}/monitoring/add-request",
+        data=data,
+    )
+
+
+def add_monitoring(app: FastAPI, logger_base_url: str, service_name: str, channel_id: int):
     data = {
         "service_name": service_name,
         "channel_id": channel_id,
@@ -23,7 +40,18 @@ def add_monitoring(app: FastAPI, logger_base_url: str, service_name: str, channe
         data=data,
         verify=verify,
     )
-    httpx_client = httpx.AsyncClient(verify=verify)
+    data = {
+        "channel_id": channel_id,
+        "logging_message" : {
+            "message": f"{service_name} successfully initialized",
+            "level": "INFO",
+        }
+    }
+    requests.post(
+        f"{logger_base_url}/monitoring/add-request",
+        data=data,
+        verify=verify,
+    )
     @app.middleware("http")
     async def logger(request: Request, call_next):
         start_time = time.perf_counter()
@@ -42,17 +70,3 @@ def add_monitoring(app: FastAPI, logger_base_url: str, service_name: str, channe
             data=data,
         )
         return response
-
-
-async def log(logger_base_url: str, channel_id: int, message: str, level: Literal["INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"):
-    data = {
-        "channel_id": channel_id,
-        "logging_message" : {
-            "message": message,
-            "level": level,
-        }
-    }
-    await httpx_client.post(
-        f"{logger_base_url}/monitoring/add-request",
-        data=data,
-    )
