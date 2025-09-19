@@ -13,7 +13,7 @@ from fastapi import (
 httpx_client = httpx.AsyncClient()
 
 
-def add_monitoring(app: FastAPI, logger_base_url: str, service_name: str, channel_id: int):
+def add_monitoring(app: FastAPI, logger_base_url: str, service_name: str, channel_id: int, verify: bool = True):
     data = {
         "service_name": service_name,
         "channel_id": channel_id,
@@ -21,6 +21,7 @@ def add_monitoring(app: FastAPI, logger_base_url: str, service_name: str, channe
     requests.post(
         f"{logger_base_url}/monitoring/add-service",
         data=data,
+        verify=verify,
     )
     @app.middleware("http")
     async def logger(request: Request, call_next):
