@@ -1,14 +1,16 @@
-from datetime import datetime
 import time
+from datetime import datetime
 from typing import Literal
 
 import httpx
 import requests
-
+import urllib3
 from fastapi import (
     FastAPI,
     Request,
 )
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 httpx_client = httpx.AsyncClient()
 
@@ -39,6 +41,7 @@ def add_monitoring(app: FastAPI, logger_base_url: str, service_name: str, channe
         await httpx_client.post(
             f"{logger_base_url}/monitoring/add-request",
             data=data,
+            verify=verify,
         )
         return response
 
