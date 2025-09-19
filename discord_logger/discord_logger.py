@@ -13,7 +13,7 @@ from fastapi import (
 httpx_client = httpx.AsyncClient()
 
 
-async def add_monitoring(app: FastAPI, logger_base_url: str, service_name: str, channel_id: int):
+def add_monitoring(app: FastAPI, logger_base_url: str, service_name: str, channel_id: int):
     data = {
         "service_name": service_name,
         "channel_id": channel_id,
